@@ -128,7 +128,7 @@ def generate_presentation(stats: dict, path: str = PRESENTATION_PATH) -> None:
 
     # ---- SLIDE 1: CAPA ----
     story.append(Spacer(1, 40 * mm))
-    story.append(Paragraph('<b>Executive<br/>Summary</b>', H1))
+    story.append(Paragraph('<b>Sumário<br/>Executivo</b>', H1))
     story.append(Spacer(1, 10 * mm))
     story.append(Paragraph(
         "Auditoria de dados, análise de pipeline comercial e recomendações de processo para o time de Operations.",
@@ -143,7 +143,7 @@ def generate_presentation(stats: dict, path: str = PRESENTATION_PATH) -> None:
     story.append(PageBreak())
 
     # ---- SLIDE 2: VISÃO GERAL ----
-    story.extend(slide_header("Visão Geral do Dataset", "Tracking performance. Driving results."))
+    story.extend(slide_header("Visão Geral do Dataset", "Acompanhando performance. Gerando resultados."))
 
     cards_row1 = Table(
         [[
@@ -175,11 +175,11 @@ def generate_presentation(stats: dict, path: str = PRESENTATION_PATH) -> None:
     story.extend(slide_header("Principais Problemas Encontrados", "Auditoria de Qualidade"))
     
     erros = [
-        ("Typos em Stage, Lead_Office e Lead_Source",
+        ("Typos em Estágio, Escritório e Canal",
          f"{stats.get('stage_typos', 0) + stats.get('office_typos', 0)} linhas"),
-        ("Divergência Amount vs soma dos produtos",
+        ("Divergência de Valor vs soma dos produtos",
          f"{stats.get('amount_divergence', 0)} deals"),
-        ("Valores numéricos em formato string",
+        ("Valores numéricos em formato texto",
          f"{stats.get('numeric_format', 0)} linhas"),
         ("Registros fora de escopo",
          f"{stats.get('out_of_scope', 0)} linhas"),
@@ -201,19 +201,19 @@ def generate_presentation(stats: dict, path: str = PRESENTATION_PATH) -> None:
          f"413 linhas",
          f"{stats.get('unique_deals', '—')} deals únicos",
          "Deduplicação"],
-        ["Stage",
+        ["Estágio",
          f"{stats.get('stage_typos', 0)} typos",
          "7 valores",
          "Mapeamento"],
-        ["Lead_Office",
+        ["Escritório",
          f"{stats.get('office_typos', 0)} variações",
          "3 valores",
          "Normalização"],
-        ["Lead_Source",
+        ["Canal de Lead",
          f"{stats.get('source_issues', 0)} inconsistências",
          "6 categorias",
          "Taxonomia"],
-        ["Amount",
+        ["Valor (Amount)",
          f"{stats.get('amount_divergence', 0)} divergentes",
          "Recalculado",
          "Soma TPA"],
@@ -229,7 +229,7 @@ def generate_presentation(stats: dict, path: str = PRESENTATION_PATH) -> None:
          stats.get("insight_revenue", "—")),
         ("Pipeline com concentração em estágios iniciais",
          stats.get("insight_pipeline", "—")),
-        ("Mix New Business vs Upsell",
+        ("Mix Novos Negócios vs Upsell",
          stats.get("insight_mix", "—")),
         ("Ciclo de venda varia por escritório",
          stats.get("insight_cycle", "—")),
@@ -258,16 +258,16 @@ def generate_presentation(stats: dict, path: str = PRESENTATION_PATH) -> None:
         
     story.append(PageBreak())
 
-    # ---- SLIDE 6: CLIENTES E LEAD SOURCE ----
+    # ---- SLIDE 6: CLIENTES E CANAL DE LEAD ----
     story.extend(slide_header("Insights — Clientes e Canal de Lead"))
 
-    client_rows = [["Cliente", "Receita YTD (R$)"]]
+    client_rows = [["Cliente", "Receita Acumulada (R$)"]]
     top5 = stats.get("top5_clients")
     if top5 is not None and len(top5) > 0:
         for _, row in top5.head(5).iterrows():
             client_rows.append([str(row.iloc[0])[:30], _fmt_brl(row.iloc[1])])
 
-    wr_rows = [["Canal", "Win Rate"]]
+    wr_rows = [["Canal", "Taxa de Conversão"]]
     wr_df = stats.get("win_rate")
     if wr_df is not None and len(wr_df) > 0:
         for _, row in wr_df.iterrows():
@@ -293,12 +293,12 @@ def generate_presentation(stats: dict, path: str = PRESENTATION_PATH) -> None:
 
     recs = [
         ("Validação em tempo real no Salesforce",
-         "Implementar Validation Rules e Picklists para Stage, Lead_Office e Lead_Source."),
-        ("Automação do recálculo de Amount",
+         "Implementar Validation Rules e Picklists para Estágio, Escritório e Canal de Lead."),
+        ("Automação do recálculo de Valor (Amount)",
          "Criar um Flow/trigger no Salesforce que recalcule Amount ao salvar produtos."),
         ("Dashboard semanal de qualidade de dados",
          "Monitorar oportunidades sem produto em estágios avançados e Amount divergente."),
-        ("Lead_Source como Picklist gerenciada",
+        ("Canal de Lead como Picklist gerenciada",
          "Substituir o campo livre pelos 17 valores canônicos."),
     ]
     
@@ -353,7 +353,7 @@ def generate_presentation(stats: dict, path: str = PRESENTATION_PATH) -> None:
         rightMargin=30 * mm,
         topMargin=20 * mm,
         bottomMargin=20 * mm,
-        title="RevOps Pipeline Intelligence",
+        title="Inteligência de Pipeline RevOps",
         author="Case Técnico",
     )
     

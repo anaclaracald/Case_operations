@@ -88,8 +88,8 @@ TEMPLATE = """<!DOCTYPE html>
 <body>
 
 <header>
-  <h1>Strategic<br>KPI Report</h1>
-  <p>Tracking performance. Driving results.<br>Reference Date: <strong>{{ reference_date }}</strong></p>
+  <h1>Relatório Estratégico<br>de KPIs</h1>
+  <p>Acompanhando performance. Gerando resultados.<br>Data de Referência: <strong>{{ reference_date }}</strong></p>
 </header>
 
 <nav>

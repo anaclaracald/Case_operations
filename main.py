@@ -222,12 +222,12 @@ def main(skip_pdf: bool = False):
     sections = [
         {
             "short_title": "Receita MoM",
-            "title": "Receita Closed Won MoM em 2026",
+            "title": "Receita Closed Won Mês a Mês em 2026",
             "chart_html": chart_revenue_mom(mom),
             "observation": _mom_obs(),
         },
         {
-            "short_title": "Lead Source",
+            "short_title": "Canal de Lead",
             "title": "Participação % por Canal de Lead — Closed Won",
             "chart_html": chart_lead_source_share(ls_share),
             "observation": _ls_obs(),
@@ -242,7 +242,7 @@ def main(skip_pdf: bool = False):
             ),
         },
         {
-            "short_title": "Win Rate",
+            "short_title": "Taxa de Conversão",
             "title": "Win Rate por Canal de Lead (%)",
             "chart_html": chart_win_rate(wr),
             "observation": _wr_obs(),
@@ -254,14 +254,14 @@ def main(skip_pdf: bool = False):
             "observation": _ticket_obs(),
         },
         {
-            "short_title": "Pipeline por Stage",
+            "short_title": "Pipeline por Estágio",
             "title": "Pipeline em Aberto por Estágio (R$)",
             "chart_html": chart_pipeline_by_stage(pipeline_stage),
             "observation": _pipeline_obs(),
         },
         {
-            "short_title": "New vs Upsell",
-            "title": "Mix New Business vs Upsell ao Longo do Tempo",
+            "short_title": "Novos vs Upsell",
+            "title": "Mix Novos Negócios vs Upsell ao Longo do Tempo",
             "chart_html": chart_mix_new_upsell(mix),
             "observation": _mix_obs(),
         },
@@ -273,7 +273,7 @@ def main(skip_pdf: bool = False):
         },
         {
             "short_title": "Top 10 Clientes",
-            "title": "Top 10 Clientes — Closed Won YTD 2026",
+            "title": "Top 10 Clientes — Closed Won Acumulado 2026",
             "chart_html": chart_top10_clients(top10_clients),
             "observation": _top10_clients_obs(),
         },

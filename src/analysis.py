@@ -152,7 +152,7 @@ def mix_new_vs_upsell(df: pd.DataFrame) -> pd.DataFrame:
     cw = deals[deals["is_closed_won"] & deals["Amount"].notna()].copy()
 
     cw["Category"] = cw["Type"].apply(
-        lambda t: "Upsell" if t == "Change Order/Upsell" else "New Business"
+        lambda t: "Upsell" if t == "Change Order/Upsell" else "Novos Negócios"
     )
 
     mix = (

@@ -208,8 +208,8 @@ def chart_mix_new_upsell(df: pd.DataFrame) -> str:
         y="Receita (R$)",
         color="Category",
         barmode="stack",
-        color_discrete_map={"New Business": COLORS["primary"], "Upsell": COLORS["secondary"]},
-        title="Mix New Business vs Upsell — Receita Mensal",
+        color_discrete_map={"Novos Negócios": COLORS["primary"], "Upsell": COLORS["secondary"]},
+        title="Mix Novos Negócios vs Upsell — Receita Mensal",
     )
     fig.update_traces(marker_cornerradius=4)
     fig.update_layout(
