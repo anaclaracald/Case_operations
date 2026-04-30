@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    page-break-after: always;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide:last-child { page-break-after: avoid; }
+
+  /* -------- Slide 1: Capa -------- */
+  .slide-cover {
+    background: linear-gradient(135deg, #6C3DF5 0%, #2D1B69 60%, #1A1A2E 100%);
+    color: white;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 50px 60px;
+  }
+  .cover-tag {
+    background: rgba(255,255,255,0.15); display: inline-block;
+    padding: 5px 16px; border-radius: 20px; font-size: 11px;
+    font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px;
+  }
+  .cover-title {
+    font-size: 44px; font-weight: 800; line-height: 1.15; margin-bottom: 16px;
+    max-width: 580px;
+  }
+  .cover-subtitle { font-size: 18px; opacity: 0.8; margin-bottom: 40px; max-width: 480px; }
+  .cover-meta { font-size: 13px; opacity: 0.6; }
+  .cover-circle {
+    position: absolute; right: -40px; top: -80px;
+    width: 380px; height: 380px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .cover-circle2 {
+    position: absolute; right: 80px; bottom: -100px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  /* -------- Standard Slide -------- */
+  .slide-standard {
+    background: #F9F8FF;
+  }
+  .slide-header {
+    background: #6C3DF5; color: white;
+    padding: 22px 40px; display: flex; align-items: center; gap: 12px;
+  }
+  .slide-number {
+    background: rgba(255,255,255,0.2); width: 32px; height: 32px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .slide-header h2 { font-size: 20px; font-weight: 700; }
+  .slide-body { flex: 1; padding: 28px 40px; overflow: hidden; }
+
+  /* -------- Grid layouts -------- */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+
+  /* -------- Cards -------- */
+  .card {
+    background: white; border-radius: 10px; padding: 20px;
+    box-shadow: 0 2px 10px rgba(108,61,245,0.08);
+    border-left: 4px solid #6C3DF5;
+  }
+  .card.danger { border-left-color: #E74C3C; }
+  .card.success { border-left-color: #27AE60; }
+  .card.warning { border-left-color: #F5A623; }
+  .card h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #6B7280; margin-bottom: 8px; }
+  .card .value { font-size: 30px; font-weight: 800; color: #6C3DF5; }
+  .card.danger .value { color: #E74C3C; }
+  .card.success .value { color: #27AE60; }
+  .card.warning .value { color: #F5A623; }
+  .card p { font-size: 12px; color: #6B7280; margin-top: 6px; line-height: 1.4; }
+
+  /* -------- Error items -------- */
+  .error-item {
+    background: white; border-radius: 10px; padding: 16px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 12px;
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .error-icon {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .error-icon.red { background: #FEE2E2; }
+  .error-icon.yellow { background: #FEF3C7; }
+  .error-icon.blue { background: #EDE8FF; }
+  .error-item h4 { font-size: 13px; font-weight: 700; color: #1A1A2E; margin-bottom: 3px; }
+  .error-item p { font-size: 12px; color: #6B7280; line-height: 1.4; }
+  .error-badge {
+    margin-left: auto; background: #EDE8FF; color: #6C3DF5;
+    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* -------- Insight items -------- */
+  .insight-item {
+    background: white; border-radius: 10px; padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 12px;
+    border-top: 3px solid #6C3DF5;
+  }
+  .insight-item.secondary { border-top-color: #F5A623; }
+  .insight-item.tertiary { border-top-color: #27AE60; }
+  .insight-item h4 { font-size: 13px; font-weight: 700; color: #1A1A2E; margin-bottom: 5px; }
+  .insight-item p { font-size: 12px; color: #6B7280; line-height: 1.5; }
+
+  /* -------- Recommendation items -------- */
+  .rec-item {
+    background: white; border-radius: 10px; padding: 16px 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 10px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .rec-num {
+    background: #6C3DF5; color: white; width: 24px; height: 24px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+  }
+  .rec-item h4 { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .rec-item p { font-size: 12px; color: #6B7280; line-height: 1.4; }
+
+  /* -------- Table in slide -------- */
+  .slide-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .slide-table th {
+    background: #6C3DF5; color: white; padding: 9px 12px;
+    text-align: left; font-weight: 600;
+  }
+  .slide-table tr:nth-child(even) td { background: #F3F0FF; }
+  .slide-table td { padding: 8px 12px; border-bottom: 1px solid #E5E7EB; }
+
+  /* -------- Closing slide -------- */
+  .slide-closing {
+    background: linear-gradient(135deg, #1A1A2E 0%, #2D1B69 60%, #6C3DF5 100%);
+    color: white; justify-content: center; align-items: center; text-align: center;
+    padding: 60px;
+  }
+  .closing-emoji { font-size: 52px; margin-bottom: 20px; }
+  .closing-title { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+  .closing-sub { font-size: 16px; opacity: 0.75; max-width: 500px; line-height: 1.6; }
+
+  /* -------- Impact bar -------- */
+  .impact-row {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+  }
+  .impact-label { font-size: 12px; font-weight: 600; width: 180px; flex-shrink: 0; }
+  .impact-bar-wrap { flex: 1; background: #EDE8FF; border-radius: 4px; height: 24px; }
+  .impact-bar {
+    height: 24px; border-radius: 4px;
+    background: linear-gradient(90deg, #6C3DF5, #F5A623);
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;
+    font-size: 11px; font-weight: 700; color: white;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SLIDE 1: CAPA ===== -->
+<div class="slide slide-cover">
+  <div class="cover-circle"></div>
+  <div class="cover-circle2"></div>
+  <div class="cover-tag">Case Técnico · Processo Seletivo</div>
+  <div class="cover-title">RevOps &amp;<br>Pipeline Intelligence</div>
+  <div class="cover-subtitle">Auditoria de dados, análise de pipeline comercial e recomendações de processo para o time de Operations.</div>
+  <div class="cover-meta">
+    <strong>Monks · Estágio Operations · 2026</strong><br>
+    Ferramenta: Python · Pandas · Plotly · IA (Claude)<br>
+    Dataset: 413 linhas · opps_corrupted.xlsx
+  </div>
+</div>
+
+<!-- ===== SLIDE 2: VISÃO GERAL DOS DADOS ===== -->
+<div class="slide slide-standard">
+  <div class="slide-header">
+    <div class="slide-number">2</div>
+    <h2>Visão Geral do Dataset</h2>
+  </div>
+  <div class="slide-body">
+    <div class="grid-4" style="margin-bottom: 20px;">
+      <div class="card">
+        <h3>Linhas Brutas</h3>
+        <div class="value">413</div>
+        <p>Nível de produto — um deal pode ter múltiplas linhas</p>
+      </div>
+      <div class="card success">
+        <h3>Deals Únicos</h3>
+        <div class="value">261</div>
+        <p>Após deduplicação por Opportunity_ID</p>
+      </div>
+      <div class="card warning">
+        <h3>Em Aberto</h3>
+        <div class="value">136</div>
+        <p>Oportunidades ainda em negociação</p>
+      </div>
+      <div class="card success">
+        <h3>Closed Won</h3>
+        <div class="value">67</div>
+        <p>Negócios fechados ganhos em 2026</p>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="card">
+        <h3>Receita Total CW 2026</h3>
+        <div class="value" style="font-size:22px;">R$ 27.186.886</div>
+        <p>Soma de Amount — apenas Closed Won 2026</p>
+      </div>
+      <div class="card warning">
+        <h3>Pipeline em Aberto</h3>
+        <div class="value" style="font-size:22px;">R$ 76.971.784</div>
+        <p>Soma de Amount — oportunidades em aberto</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 3: ERROS ENCONTRADOS ===== -->
+<div class="slide slide-standard">
+  <div class="slide-header">
+    <div class="slide-number">3</div>
+    <h2>Principais Problemas Encontrados na Planilha</h2>
+  </div>
+  <div class="slide-body">
+    <div class="error-item">
+      <div class="error-icon red">✏️</div>
+      <div>
+        <h4>Erros de digitação em Stage, Lead_Office e Lead_Source</h4>
+        <p>Valores como "Closed Wonn", "Negociation", "SP", "sao paulo" fragmentavam dashboards e impedia filtros corretos.</p>
+      </div>
+      <span class="error-badge">12 linhas</span>
+    </div>
+    <div class="error-item">
+      <div class="error-icon yellow">💰</div>
+      <div>
+        <h4>Divergência entre Amount e soma dos produtos</h4>
+        <p>O valor total do deal não batia com a soma dos produtos. O Amount foi recalculado usando Total_Product_Amount como fonte da verdade.</p>
+      </div>
+      <span class="error-badge">30 deals</span>
+    </div>
+    <div class="error-item">
+      <div class="error-icon blue">🔢</div>
+      <div>
+        <h4>Valores numéricos em formato string com vírgula</h4>
+        <p>Campos Amount registrados como texto com vírgula decimal (ex: "3.043.949,95") impediam qualquer cálculo automático.</p>
+      </div>
+      <span class="error-badge">268 linhas</span>
+    </div>
+    <div class="error-item">
+      <div class="error-icon red">🚫</div>
+      <div>
+        <h4>Registros fora do escopo de análise</h4>
+        <p>Types como "Retainer", "Passthrough" e "Flex/Renewal" foram identificados e marcados como fora de escopo, não entrando nas métricas.</p>
+      </div>
+      <span class="error-badge">108 linhas</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 4: IMPACTO DA LIMPEZA ===== -->
+<div class="slide slide-standard">
+  <div class="slide-header">
+    <div class="slide-number">4</div>
+    <h2>Impacto da Limpeza de Dados</h2>
+  </div>
+  <div class="slide-body">
+    <p style="font-size:13px; color:#6B7280; margin-bottom:20px;">
+      Comparativo antes e depois das correções aplicadas. A limpeza garante que os números reais do negócio sejam corretamente representados.
+    </p>
+    <div class="impact-row">
+      <span class="impact-label">Linhas brutas → Deals únicos</span>
+      <div class="impact-bar-wrap">
+        <div class="impact-bar" style="width:85%;">413 → 261 deals</div>
+      </div>
+    </div>
+    <div class="impact-row">
+      <span class="impact-label">Stage corrigidos</span>
+      <div class="impact-bar-wrap">
+        <div class="impact-bar" style="width:40%;">12 linhas normalizadas</div>
+      </div>
+    </div>
+    <div class="impact-row">
+      <span class="impact-label">Lead_Office padronizado</span>
+      <div class="impact-bar-wrap">
+        <div class="impact-bar" style="width:30%;">18 linhas → 3 valores canônicos</div>
+      </div>
+    </div>
+    <div class="impact-row">
+      <span class="impact-label">Lead_Source normalizado</span>
+      <div class="impact-bar-wrap">
+        <div class="impact-bar" style="width:55%;">413 linhas → 6 categorias</div>
+      </div>
+    </div>
+    <div class="impact-row">
+      <span class="impact-label">Amount recalculado</span>
+      <div class="impact-bar-wrap">
+        <div class="impact-bar" style="width:25%;">30 deals corrigidos</div>
+      </div>
+    </div>
+    <div style="margin-top:20px; background:#EDE8FF; border-radius:10px; padding:14px 20px;">
+      <p style="font-size:13px; color:#4A1FA8; font-weight:600;">
+        ✅ Após limpeza: planilha com 413 linhas, 261 deals únicos,
+        nova coluna Lead_Source_Category com 6 categorias e flag in_scope para controle de escopo.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 5: INSIGHTS RECEITA E PIPELINE ===== -->
+<div class="slide slide-standard">
+  <div class="slide-header">
+    <div class="slide-number">5</div>
+    <h2>Insights — Receita e Pipeline</h2>
+  </div>
+  <div class="slide-body">
+    <div class="insight-item">
+      <h4>📈 Receita Closed Won concentrada no início do ano</h4>
+      <p>O mês de maior receita foi 2026-02 com R$ 9.873.872. Concentração no início do ano pode indicar renovações anuais.</p>
+    </div>
+    <div class="insight-item secondary">
+      <h4>🏗️ Pipeline aberto com alta concentração em estágios iniciais</h4>
+      <p>Pitched concentra o maior valor em pipeline (R$ 29.525.720). Estágios iniciais com grande volume indicam pipeline lento ou mal qualificado.</p>
+    </div>
+    <div class="insight-item tertiary">
+      <h4>🔄 Mix de New Business vs Upsell</h4>
+      <p>Upsell representa 64.3% da receita fechada — base de clientes existente é relevante. Alta proporção de upsell pode indicar baixa penetração em novas contas.</p>
+    </div>
+    <div class="insight-item">
+      <h4>⏱️ Ciclo de venda varia por escritório</h4>
+      <p>Sao Carlos, BR fecha mais rápido (67 dias) vs Sao Paulo, BR (91 dias). Diferenças podem refletir perfil de cliente ou processo de venda.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 6: INSIGHTS CLIENTES E LEAD SOURCE ===== -->
+<div class="slide slide-standard">
+  <div class="slide-header">
+    <div class="slide-number">6</div>
+    <h2>Insights — Clientes e Canal de Lead</h2>
+  </div>
+  <div class="slide-body">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%;">
+      <div>
+        <h3 style="font-size:14px; font-weight:700; margin-bottom:12px; color:#6C3DF5;">Top 5 Clientes Closed Won YTD 2026</h3>
+        <table class="slide-table">
+          <thead><tr><th>Cliente</th><th>Receita (R$)</th></tr></thead>
+          <tbody>
+            <tr><td>Saffron Fashion</td><td>R$ 4.398.171</td></tr><tr><td>Company 111</td><td>R$ 4.293.965</td></tr><tr><td>Zephyr Telecom</td><td>R$ 4.240.263</td></tr><tr><td>Ember Hospitality</td><td>R$ 2.650.000</td></tr><tr><td>Dune Ecommerce</td><td>R$ 1.927.432</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3 style="font-size:14px; font-weight:700; margin-bottom:12px; color:#6C3DF5;">Win Rate por Canal</h3>
+        <table class='slide-table'><thead><tr><th>Canal</th><th>Win Rate</th></tr></thead><tbody><tr><td>Customer Success</td><td>42.4%</td></tr><tr><td>Outbound</td><td>33.3%</td></tr><tr><td>Referral</td><td>21.7%</td></tr><tr><td>Inbound</td><td>21.4%</td></tr><tr><td>Unknown</td><td>14.3%</td></tr><tr><td>Event</td><td>0.0%</td></tr></tbody></table>
+        <div style="margin-top:14px; background:#FEF3C7; border-radius:8px; padding:12px;">
+          <p style="font-size:12px; color:#92400E; font-weight:600;">Customer Success apresenta o maior win rate (42.4%). Canais com win rate baixo merecem revisão de qualificação.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 7: RECOMENDAÇÕES ===== -->
+<div class="slide slide-standard">
+  <div class="slide-header">
+    <div class="slide-number">7</div>
+    <h2>Recomendações de Processo</h2>
+  </div>
+  <div class="slide-body">
+    <p style="font-size:13px; color:#6B7280; margin-bottom:18px;">
+      Como prevenir esses problemas no futuro e garantir dados confiáveis no CRM.
+    </p>
+    <div class="rec-item">
+      <div class="rec-num">1</div>
+      <div>
+        <h4>Validação em tempo real no Salesforce</h4>
+        <p>Implementar Validation Rules e Picklists para Stage, Lead_Office e Lead_Source. Impede erros de digitação na origem, eliminando a necessidade de limpeza retroativa.</p>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">2</div>
+      <div>
+        <h4>Automação do recálculo de Amount</h4>
+        <p>Criar um Flow ou trigger no Salesforce que recalcule automaticamente Amount ao salvar/atualizar produtos. Evita divergências entre o total do deal e a soma dos produtos.</p>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">3</div>
+      <div>
+        <h4>Dashboard de qualidade de dados (DataOps)</h4>
+        <p>Montar um relatório semanal automático que monitore: % de oportunidades sem produto em estágios avançados, Amount divergente e Lead_Source não categorizado.</p>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">4</div>
+      <div>
+        <h4>Taxonomia de Lead_Source como campo obrigatório</h4>
+        <p>Substituir o campo livre Lead_Source por uma Picklist gerenciada com os 17 valores canônicos, eliminando variações de grafia e valores deprecated sem substituto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 8: CONCLUSÃO ===== -->
+<div class="slide slide-closing">
+  <div class="closing-emoji">🎯</div>
+  <div class="closing-title">Conclusões e Aprendizados</div>
+  <div class="closing-sub">
+    Dados confiáveis são pré-requisito para qualquer análise de RevOps.<br><br>
+    A limpeza revelou que <strong>206% das linhas</strong> tinham algum problema —
+    a maioria corrigível com validação na origem.<br><br>
+    O uso de IA acelerou identificação de padrões e geração de código,
+    mas a decisão analítica e a interpretação de negócio foram humanas.
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Erros — Case RevOps Monks</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #8B5CF6;
+    --primary-light: #EBE4FF;
+    --secondary: #FBE122;
+    --dark: #1A1528;
+    --gray: #6B7280;
+    --bg: #F8F7FB;
+    --white: #FFFFFF;
+    --border: #E5E7EB;
+    --shadow: 0 10px 25px rgba(0,0,0,0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); line-height: 1.6; }
+  h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; color: var(--dark); }
+  
+  header {
+    padding: 60px 40px 20px; max-width: 1200px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  header h1 { font-size: 48px; font-weight: 800; line-height: 1.1; max-width: 600px; }
+  header p { font-size: 16px; color: var(--gray); max-width: 400px; text-align: right; }
+  
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px 40px 60px; }
+  
+  /* Executive Summary */
+  .summary-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px; margin-bottom: 40px;
+  }
+  .stat-card {
+    border-radius: 24px; padding: 30px;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .stat-card.purple { background: var(--primary); color: white; }
+  .stat-card.yellow { background: var(--secondary); color: var(--dark); }
+  .stat-card .number { font-size: 36px; font-weight: 800; font-family: 'Poppins', sans-serif; margin-bottom: 8px; }
+  .stat-card .label { font-size: 14px; font-weight: 500; opacity: 0.9; }
+  
+  /* Summary Table */
+  .summary-table-wrap { background: var(--white); border-radius: 24px; padding: 32px; box-shadow: var(--shadow); margin-bottom: 40px; }
+  .summary-table-wrap h2 { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { background: var(--primary); color: white; padding: 14px; text-align: left; font-weight: 600; border-radius: 8px; }
+  tr:nth-child(even) td { background: var(--bg); }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  
+  /* Category Sections */
+  .category-section {
+    background: var(--white); border-radius: 24px; padding: 32px;
+    box-shadow: var(--shadow); margin-bottom: 32px;
+  }
+  .category-header {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+  }
+  .count-badge {
+    background: var(--secondary); color: var(--dark);
+    padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
+  }
+  .count-badge.ok { background: var(--primary-light); color: var(--primary); }
+  .category-section h3 { font-size: 20px; font-weight: 700; }
+  
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+  @media(max-width:640px) { .info-grid { grid-template-columns: 1fr; } }
+  
+  .info-box {
+    background: var(--bg); border-radius: 16px; padding: 20px;
+  }
+  .info-box .box-label { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; }
+  .info-box p { font-size: 14px; color: var(--dark); font-weight: 500; }
+  
+  .examples-table { margin-top: 24px; overflow-x: auto; }
+  .examples-table caption { font-size: 14px; color: var(--gray); margin-bottom: 12px; text-align: left; font-weight: 600; }
+  
+  footer { text-align: center; padding: 32px; color: var(--gray); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Data Quality<br>Audit Report</h1>
+  <p>Tracking performance. Driving results.<br><strong>opps_corrupted.xlsx</strong></p>
+</header>
+
+<div class="container">
+
+  <!-- Executive Summary -->
+  <div class="summary-grid">
+    <div class="stat-card purple">
+      <div class="number">413</div>
+      <div class="label">Linhas brutas</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="number">9</div>
+      <div class="label">Categorias de problemas</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="number">850</div>
+      <div class="label">Linhas com problemas</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="number">261</div>
+      <div class="label">Deals únicos</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="number">108</div>
+      <div class="label">Registros fora de escopo</div>
+    </div>
+  </div>
+
+  <!-- Summary Table -->
+  <div class="summary-table-wrap">
+    <h2>Resumo Executivo por Categoria</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Categoria de Problema</th>
+          <th>Linhas Afetadas</th>
+          <th>Correção</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>1</td>
+          <td><strong>Linhas completamente duplicadas</strong></td>
+          <td>
+            
+              <span class="count-badge ok">✓ Nenhum</span>
+            
+          </td>
+          <td style="font-size:13px;">Linhas completamente duplicadas foram removidas (mantém a primeira ocorrência).</td>
+        </tr>
+        
+        <tr>
+          <td>2</td>
+          <td><strong>Typos em Stage</strong></td>
+          <td>
+            
+              <span class="count-badge">12</span>
+            
+          </td>
+          <td style="font-size:13px;">Cada valor com erro foi mapeado para o seu equivalente canônico correto usando um dicionário de correções. Ex: 'Closed Wonn' → 'Closed Won'.</td>
+        </tr>
+        
+        <tr>
+          <td>3</td>
+          <td><strong>Typos em Lead_Office</strong></td>
+          <td>
+            
+              <span class="count-badge">18</span>
+            
+          </td>
+          <td style="font-size:13px;">Todos os valores foram normalizados para a forma canônica correspondente. Ex: 'SP', 'sao paulo', 'São Paulo' → 'Sao Paulo, BR'.</td>
+        </tr>
+        
+        <tr>
+          <td>4</td>
+          <td><strong>Inconsistências em Lead_Source</strong></td>
+          <td>
+            
+              <span class="count-badge">413</span>
+            
+          </td>
+          <td style="font-size:13px;">Cada valor foi normalizado (strip, lowercase) e mapeado para o canônico. Valores sem mapeamento direto receberam 'Unknown'.</td>
+        </tr>
+        
+        <tr>
+          <td>5</td>
+          <td><strong>Tipos fora de escopo</strong></td>
+          <td>
+            
+              <span class="count-badge">104</span>
+            
+          </td>
+          <td style="font-size:13px;">Uma coluna 'in_scope' (True/False) foi adicionada. Registros fora de escopo recebem in_scope=False e são excluídos das métricas.</td>
+        </tr>
+        
+        <tr>
+          <td>6</td>
+          <td><strong>Type ausente</strong></td>
+          <td>
+            
+              <span class="count-badge">4</span>
+            
+          </td>
+          <td style="font-size:13px;">Registros com Type nulo recebem in_scope=False e são excluídos da análise.</td>
+        </tr>
+        
+        <tr>
+          <td>7</td>
+          <td><strong>Formatos numéricos inconsistentes</strong></td>
+          <td>
+            
+              <span class="count-badge">268</span>
+            
+          </td>
+          <td style="font-size:13px;">Vírgulas foram substituídas por pontos e o campo convertido para float.</td>
+        </tr>
+        
+        <tr>
+          <td>8</td>
+          <td><strong>Divergência Amount vs Total_Product_Amount</strong></td>
+          <td>
+            
+              <span class="count-badge">30</span>
+            
+          </td>
+          <td style="font-size:13px;">Amount de cada deal foi substituído pela soma dos Total_Product_Amount dos seus produtos.</td>
+        </tr>
+        
+        <tr>
+          <td>9</td>
+          <td><strong>Valores ausentes inesperados</strong></td>
+          <td>
+            
+              <span class="count-badge">1</span>
+            
+          </td>
+          <td style="font-size:13px;">Esses registros são sinalizados na coluna 'data_quality_flag' para revisão manual. Não são imputados automaticamente.</td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Per-category sections -->
+  
+  <div class="category-section">
+    <div class="category-header">
+      <h3>1. Linhas completamente duplicadas</h3>
+      
+        <span class="count-badge ok">✓ Sem problemas</span>
+      
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="box-label">🏢 Em linguagem de negócio</div>
+        <p>Existem registros repetidos exatamente iguais, provavelmente por erro de exportação do CRM. Cada linha duplicada adiciona valor fictício às métricas.</p>
+      </div>
+      <div class="info-box">
+        <div class="box-label">✅ Correção aplicada</div>
+        <p>Linhas completamente duplicadas foram removidas (mantém a primeira ocorrência).</p>
+      </div>
+    </div>
+
+    
+  </div>
+  
+  <div class="category-section">
+    <div class="category-header">
+      <h3>2. Typos em Stage</h3>
+      
+        <span class="count-badge">12 linhas afetadas</span>
+      
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="box-label">🏢 Em linguagem de negócio</div>
+        <p>O estágio do negócio estava escrito de forma errada em algumas linhas (ex: 'Closed Wonn', 'Negociation'). Isso impede filtros e dashboards de funcionar corretamente, pois o sistema não reconhece o estágio.</p>
+      </div>
+      <div class="info-box">
+        <div class="box-label">✅ Correção aplicada</div>
+        <p>Cada valor com erro foi mapeado para o seu equivalente canônico correto usando um dicionário de correções. Ex: 'Closed Wonn' → 'Closed Won'.</p>
+      </div>
+    </div>
+
+    
+    <div class="examples-table">
+      <caption>Exemplos reais da planilha (até 10 linhas)</caption>
+      <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Opportunity_ID</th>
+      <th>Stage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OPP-10008</td>
+      <td>Closed Wonn</td>
+    </tr>
+    <tr>
+      <td>OPP-10031</td>
+      <td>Clossed Won</td>
+    </tr>
+    <tr>
+      <td>OPP-10052</td>
+      <td>Clossed Won</td>
+    </tr>
+    <tr>
+      <td>OPP-10054</td>
+      <td>Clossed Won</td>
+    </tr>
+    <tr>
+      <td>OPP-10115</td>
+      <td>Qualifyed</td>
+    </tr>
+    <tr>
+      <td>OPP-10124</td>
+      <td>Pitchinng</td>
+    </tr>
+    <tr>
+      <td>OPP-10159</td>
+      <td>Pithced</td>
+    </tr>
+    <tr>
+      <td>OPP-10173</td>
+      <td>Pithced</td>
+    </tr>
+    <tr>
+      <td>OPP-10175</td>
+      <td>Negociation</td>
+    </tr>
+    <tr>
+      <td>OPP-10218</td>
+      <td>Registrationn</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    
+  </div>
+  
+  <div class="category-section">
+    <div class="category-header">
+      <h3>3. Typos em Lead_Office</h3>
+      
+        <span class="count-badge">18 linhas afetadas</span>
+      
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="box-label">🏢 Em linguagem de negócio</div>
+        <p>O escritório responsável pelo negócio estava registrado de formas diferentes: 'SP', 'sao paulo', 'São Paulo' — todos representam o mesmo escritório. Isso fragmenta os relatórios por escritório.</p>
+      </div>
+      <div class="info-box">
+        <div class="box-label">✅ Correção aplicada</div>
+        <p>Todos os valores foram normalizados para a forma canônica correspondente. Ex: 'SP', 'sao paulo', 'São Paulo' → 'Sao Paulo, BR'.</p>
+      </div>
+    </div>
+
+    
+    <div class="examples-table">
+      <caption>Exemplos reais da planilha (até 10 linhas)</caption>
+      <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Opportunity_ID</th>
+      <th>Lead_Office</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OPP-10002</td>
+      <td>São Paulo</td>
+    </tr>
+    <tr>
+      <td>OPP-10031</td>
+      <td>SP</td>
+    </tr>
+    <tr>
+      <td>OPP-10031</td>
+      <td>SAO PAULO</td>
+    </tr>
+    <tr>
+      <td>OPP-10037</td>
+      <td>São Paulo</td>
+    </tr>
+    <tr>
+      <td>OPP-10069</td>
+      <td>SP</td>
+    </tr>
+    <tr>
+      <td>OPP-10074</td>
+      <td>sp</td>
+    </tr>
+    <tr>
+      <td>OPP-10121</td>
+      <td>São Paulo</td>
+    </tr>
+    <tr>
+      <td>OPP-10129</td>
+      <td>sao paulo</td>
+    </tr>
+    <tr>
+      <td>OPP-10130</td>
+      <td>São Paulo</td>
+    </tr>
+    <tr>
+      <td>OPP-10141</td>
+      <td>São Paulo</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    
+  </div>
+  
+  <div class="category-section">
+    <div class="category-header">
+      <h3>4. Inconsistências em Lead_Source</h3>
+      
+        <span class="count-badge">413 linhas afetadas</span>
+      
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="box-label">🏢 Em linguagem de negócio</div>
+        <p>A origem do lead estava registrada de maneiras inconsistentes: espaços no início/fim, letras maiúsculas, traços ao invés de espaços. Isso faz com que a mesma fonte apareça múltiplas vezes nos relatórios.</p>
+      </div>
+      <div class="info-box">
+        <div class="box-label">✅ Correção aplicada</div>
+        <p>Cada valor foi normalizado (strip, lowercase) e mapeado para o canônico. Valores sem mapeamento direto receberam 'Unknown'.</p>
+      </div>
+    </div>
+
+    
+    <div class="examples-table">
+      <caption>Exemplos reais da planilha (até 10 linhas)</caption>
+      <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Opportunity_ID</th>
+      <th>Lead_Source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OPP-10001</td>
+      <td>Inbound - Current Client (DEPRECATED)</td>
+    </tr>
+    <tr>
+      <td>OPP-10002</td>
+      <td>Referral - Partner - Google Marketing Platform</td>
+    </tr>
+    <tr>
+      <td>OPP-10003</td>
+      <td>Referral - Internal</td>
+    </tr>
+    <tr>
+      <td>OPP-10004</td>
+      <td>Inbound - Current Client (DEPRECATED)</td>
+    </tr>
+    <tr>
+      <td>OPP-10005</td>
+      <td>Referral - Internal</td>
+    </tr>
+    <tr>
+      <td>OPP-10006</td>
+      <td>Inbound - Current Client (DEPRECATED)</td>
+    </tr>
+    <tr>
+      <td>OPP-10007</td>
+      <td>Inbound - Current Client (DEPRECATED)</td>
+    </tr>
+    <tr>
+      <td>OPP-10008</td>
+      <td>inbound - current client (deprecated)</td>
+    </tr>
+    <tr>
+      <td>OPP-10008</td>
+      <td>Inbound - Current Client (DEPRECATED)</td>
+    </tr>
+    <tr>
+      <td>OPP-10009</td>
+      <td>Inbound - Current Client (DEPRECATED)</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    
+  </div>
+  
+  <div class="category-section">
+    <div class="category-header">
+      <h3>5. Tipos fora de escopo</h3>
+      
+        <span class="count-badge">104 linhas afetadas</span>
+      
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="box-label">🏢 Em linguagem de negócio</div>
+        <p>Existem tipos de oportunidade que não fazem parte do escopo desta análise (ex: 'Retainer', 'Passthrough', 'Flex/Renewal'). Esses registros serão marcados mas mantidos na planilha.</p>
+      </div>
+      <div class="info-box">
+        <div class="box-label">✅ Correção aplicada</div>
+        <p>Uma coluna 'in_scope' (True/False) foi adicionada. Registros fora de escopo recebem in_scope=False e são excluídos das métricas.</p>
+      </div>
+    </div>
+
+    
+    <div class="examples-table">
+      <caption>Exemplos reais da planilha (até 10 linhas)</caption>
+      <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Opportunity_ID</th>
+      <th>Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OPP-10008</td>
+      <td>Flex/Renewal</td>
+    </tr>
+    <tr>
+      <td>OPP-10009</td>
+      <td>Flex/Renewal</td>
+    </tr>
+    <tr>
+      <td>OPP-10015</td>
+      <td>Flex/Renewal</td>
+    </tr>
+    <tr>
+      <td>OPP-10021</td>
+      <td>Flex/Renewal</td>
+    </tr>
+    <tr>
+      <td>OPP-10022</td>
+      <td>Flex/Renewal</td>
+    </tr>
+    <tr>
+      <td>OPP-10023</td>
+      <td>Flex/Renewal</td>
+    </tr>
+    <tr>
+      <td>OPP-10025</td>
+      <td>Flex/Renewal</td>
+    </tr>
+    <tr>
+      <td>OPP-10026</td>
+      <td>Flex/Renewal</td>
+    </tr>
+    <tr>
+      <td>OPP-10027</td>
+      <td>Retainer</td>
+    </tr>
+    <tr>
+      <td>OPP-10036</td>
+      <td>Flex/Renewal</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    
+  </div>
+  
+  <div class="category-section">
+    <div class="category-header">
+      <h3>6. Type ausente</h3>
+      
+        <span class="count-badge">4 linhas afetadas</span>
+      
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="box-label">🏢 Em linguagem de negócio</div>
+        <p>Algumas oportunidades não têm o tipo de negócio preenchido. Sem essa informação, não é possível classificá-las corretamente.</p>
+      </div>
+      <div class="info-box">
+        <div class="box-label">✅ Correção aplicada</div>
+        <p>Registros com Type nulo recebem in_scope=False e são excluídos da análise.</p>
+      </div>
+    </div>
+
+    
+    <div class="examples-table">
+      <caption>Exemplos reais da planilha (até 10 linhas)</caption>
+      <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Opportunity_ID</th>
+      <th>Opportunity_Name</th>
+      <th>Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OPP-10206</td>
+      <td>Company 123 -  - 05/2026</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>OPP-10215</td>
+      <td>Mesa Electronics -  - 03/2026</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>OPP-10252</td>
+      <td>Patchouli Energy -  - 07/2026</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>OPP-10259</td>
+      <td>Birch Studios - DDM - Media - Managed Media (AOR) - 05/2026</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    
+  </div>
+  
+  <div class="category-section">
+    <div class="category-header">
+      <h3>7. Formatos numéricos inconsistentes</h3>
+      
+        <span class="count-badge">268 linhas afetadas</span>
+      
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="box-label">🏢 Em linguagem de negócio</div>
+        <p>Os valores financeiros foram registrados com vírgula ao invés de ponto (ex: '3.043.949,95' ao invés de '3043949.95'). Isso impede qualquer cálculo automático.</p>
+      </div>
+      <div class="info-box">
+        <div class="box-label">✅ Correção aplicada</div>
+        <p>Vírgulas foram substituídas por pontos e o campo convertido para float.</p>
+      </div>
+    </div>
+
+    
+    <div class="examples-table">
+      <caption>Exemplos reais da planilha (até 10 linhas)</caption>
+      <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Opportunity_ID</th>
+      <th>Amount</th>
+      <th>Total_Product_Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OPP-10001</td>
+      <td>3043949,95</td>
+      <td>829077,09</td>
+    </tr>
+    <tr>
+      <td>OPP-10001</td>
+      <td>3043949,95</td>
+      <td>1475924,6</td>
+    </tr>
+    <tr>
+      <td>OPP-10001</td>
+      <td>3043949,95</td>
+      <td>738948,26</td>
+    </tr>
+    <tr>
+      <td>OPP-10004</td>
+      <td>32226,34</td>
+      <td>32226,34</td>
+    </tr>
+    <tr>
+      <td>OPP-10006</td>
+      <td>64258,47</td>
+      <td>64258,47</td>
+    </tr>
+    <tr>
+      <td>OPP-10007</td>
+      <td>490928,88</td>
+      <td>490928,88</td>
+    </tr>
+    <tr>
+      <td>OPP-10008</td>
+      <td>2706200,27</td>
+      <td>573365,34</td>
+    </tr>
+    <tr>
+      <td>OPP-10008</td>
+      <td>2706200,27</td>
+      <td>70270,64</td>
+    </tr>
+    <tr>
+      <td>OPP-10008</td>
+      <td>2706200,27</td>
+      <td>145409,64</td>
+    </tr>
+    <tr>
+      <td>OPP-10008</td>
+      <td>2706200,27</td>
+      <td>1917154,65</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    
+  </div>
+  
+  <div class="category-section">
+    <div class="category-header">
+      <h3>8. Divergência Amount vs Total_Product_Amount</h3>
+      
+        <span class="count-badge">30 linhas afetadas</span>
+      
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="box-label">🏢 Em linguagem de negócio</div>
+        <p>O valor total do negócio não bate com a soma dos produtos. A regra do case é que o Amount pode estar errado; a verdade é a soma dos produtos. Esses valores serão corrigidos.</p>
+      </div>
+      <div class="info-box">
+        <div class="box-label">✅ Correção aplicada</div>
+        <p>Amount de cada deal foi substituído pela soma dos Total_Product_Amount dos seus produtos.</p>
+      </div>
+    </div>
+
+    
+    <div class="examples-table">
+      <caption>Exemplos reais da planilha (até 10 linhas)</caption>
+      <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Opportunity_ID</th>
+      <th>Amount_Original</th>
+      <th>TPA_Soma</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OPP-10027</td>
+      <td>45000.0</td>
+      <td>36000.0</td>
+    </tr>
+    <tr>
+      <td>OPP-10030</td>
+      <td>290400.0</td>
+      <td>645420.0</td>
+    </tr>
+    <tr>
+      <td>OPP-10051</td>
+      <td>760000.0</td>
+      <td>696000.0</td>
+    </tr>
+    <tr>
+      <td>OPP-10081</td>
+      <td>150000.0</td>
+      <td>120000.0</td>
+    </tr>
+    <tr>
+      <td>OPP-10089</td>
+      <td>728000.0</td>
+      <td>520000.0</td>
+    </tr>
+    <tr>
+      <td>OPP-10092</td>
+      <td>295200.0</td>
+      <td>492000.0</td>
+    </tr>
+    <tr>
+      <td>OPP-10097</td>
+      <td>1974000.0</td>
+      <td>1410000.0</td>
+    </tr>
+    <tr>
+      <td>OPP-10104</td>
+      <td>144.0</td>
+      <td>144000.0</td>
+    </tr>
+    <tr>
+      <td>OPP-10111</td>
+      <td>67500.0</td>
+      <td>90000.0</td>
+    </tr>
+    <tr>
+      <td>OPP-10126</td>
+      <td>375000.0</td>
+      <td>300000.0</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    
+  </div>
+  
+  <div class="category-section">
+    <div class="category-header">
+      <h3>9. Valores ausentes inesperados</h3>
+      
+        <span class="count-badge">1 linhas afetadas</span>
+      
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="box-label">🏢 Em linguagem de negócio</div>
+        <p>Oportunidades em estágios avançados devem ter valor e produto preenchidos. Campos vazios nesses casos indicam dado incompleto no CRM.</p>
+      </div>
+      <div class="info-box">
+        <div class="box-label">✅ Correção aplicada</div>
+        <p>Esses registros são sinalizados na coluna 'data_quality_flag' para revisão manual. Não são imputados automaticamente.</p>
+      </div>
+    </div>
+
+    
+    <div class="examples-table">
+      <caption>Exemplos reais da planilha (até 10 linhas)</caption>
+      <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Opportunity_ID</th>
+      <th>Stage</th>
+      <th>Amount</th>
+      <th>Product_Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OPP-10115</td>
+      <td>Qualifyed</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    
+  </div>
+  
+
+</div>
+<footer>
+  Gerado automaticamente pelo pipeline de auditoria — Case RevOps Monks · 2026
+</footer>
+</body>
+</html>
